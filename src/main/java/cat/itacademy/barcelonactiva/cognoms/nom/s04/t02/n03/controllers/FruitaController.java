@@ -11,21 +11,15 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/fruita")
 public class FruitaController {
 
     @Autowired
     private FruitaRepository fruitaRepository;
 
     @PostMapping("/add")
-    public ResponseEntity<Fruita> anadirFruita(@RequestBody Fruita fruita) {
-        try {
-            Fruita _fruita = fruitaRepository
-                    .save(new Fruita(fruita.getNombre(), fruita.getQuantitatQuilos()));
-            return new ResponseEntity<>(_fruita, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public String saveBook(@RequestBody Fruita fruita) {
+        fruitaRepository.save(fruita);
+        return "Added Successfully";
     }
 
     @PutMapping("/update/{id}")
@@ -43,38 +37,20 @@ public class FruitaController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<HttpStatus> deleteFruita(@PathVariable("id") int id) {
-        try {
-            fruitaRepository.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public String deleteFruita(@PathVariable int id) {
+        fruitaRepository.deleteById(id);
+
+        return "Deleted Successfully";
     }
 
     @GetMapping("/getOne/{id}")
-    public ResponseEntity<Fruita> getFruitaById(@PathVariable("id") int id) {
-        Optional<Fruita> fruitaData = fruitaRepository.findById(id);
-
-        if (fruitaData.isPresent()) {
-            return new ResponseEntity<>(fruitaData.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public Optional<Fruita> getFruita(@PathVariable int id) {
+        return fruitaRepository.findById(id);
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<Fruita>> getAllFruita() {
-        try {
-            List<Fruita> fruitas = fruitaRepository.findAll();
-            if (fruitas.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            } else {
-                return new ResponseEntity<>(fruitas, HttpStatus.OK);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public List<Fruita> getFruitas() {
+        return fruitaRepository.findAll();
     }
 }
 
